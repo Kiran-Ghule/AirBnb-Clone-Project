@@ -32,7 +32,7 @@ public class Hotel {
     private String[] photos;
 
     @Column(columnDefinition = "TEXT[]")
-    private String amentites;
+    private String[] amentities;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -43,12 +43,11 @@ public class Hotel {
     @Column(nullable = false)
     private Boolean active;
 
-    @OneToMany(mappedBy="hotel",fetch = FetchType.LAZY)
-    private List<Room> rooms;
-
     @Embedded
-    private HotelContactInfo hotelContactInfo;
+    private HotelContactInfo contactInfo;
 
+    @ManyToOne
+    private User owner;
 
 
 
