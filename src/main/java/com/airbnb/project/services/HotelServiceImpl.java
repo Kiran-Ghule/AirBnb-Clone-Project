@@ -3,12 +3,17 @@ package com.airbnb.project.services;
 import com.airbnb.project.Exception.ResourceNotFoundException;
 import com.airbnb.project.dto.HotelDTO;
 import com.airbnb.project.entities.Hotel;
+import com.airbnb.project.entities.Room;
 import com.airbnb.project.repository.HotelRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.ResourceAccessException;
+
+import java.lang.reflect.Field;
 
 @Service
 @Slf4j
@@ -17,6 +22,9 @@ public class HotelServiceImpl implements HotelService {
 
     private final HotelRepository hotelRepository;
     private  final ModelMapper modelMapper;
+    private final InventoryService inventoryService;
+    private final RoomService roomService;
+
     @Override
     public HotelDTO createNewHotel(HotelDTO hotelDTO) {
         log.info("Creating a new Hotel with Name : {}", hotelDTO.getName());
@@ -54,24 +62,26 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public Boolean deleteHotelById(Long id) {
-        if(!hotelRepository.existsById(id))
-            {
-            throw new ResourceNotFoundException("Hotel not found with id : " + id);
-            }
+    @Transactional
+    public void deleteHotelById(Long id) {
+        Hotel hotel = getById(id);
+
+        for(Room room : hotel.getRooms())
+            roomService.deleteRoomById(room.getId());
 
         hotelRepository.deleteById(id);
-        //TODO : delete the future invetories for this hotel
-        return true;
-
     }
 
     @Override
     public void activateHotelById(Long id) {
         Hotel hotel = getById(id);
         hotel.setActive(true);
+        hotel=hotelRepository.save(hotel);
 
-        //Todo : Create Inventory for all room for this hotel
+        for(Room room : hotel.getRooms())
+            inventoryService.initializeRoomForYear(room);
+
+
 
     }
 
