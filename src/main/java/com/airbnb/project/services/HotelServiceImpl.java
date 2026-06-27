@@ -66,5 +66,14 @@ public class HotelServiceImpl implements HotelService {
 
     }
 
+    @Override
+    public void activateHotelById(Long id) {
+        Hotel hotel = getById(id);
+        hotel.setActive(true);
+
+        //Todo : Create Inventory for all room for this hotel
+
+    }
+
 
 }

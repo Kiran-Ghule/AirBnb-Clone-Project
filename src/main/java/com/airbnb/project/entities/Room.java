@@ -30,13 +30,13 @@ public class Room {
     private String type;
 
     @Column(nullable = false,precision =  10,scale=2)
-    private BigDecimal price;
+    private BigDecimal basePrice;
 
     @Column(columnDefinition = "TEXT[]")
     private String[] photos;
 
     @Column(columnDefinition = "TEXT[]")
-    private String amentites;
+    private String[] amentities;
 
     @CreationTimestamp
     @Column(updatable = false)
