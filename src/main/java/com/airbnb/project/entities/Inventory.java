@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
                     columnNames = {"hotel_id","room_id","date"}
             )
     )
+@Builder
 public class Inventory {
 
         @Id
