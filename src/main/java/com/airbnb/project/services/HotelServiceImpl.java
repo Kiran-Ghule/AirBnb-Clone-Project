@@ -2,6 +2,8 @@ package com.airbnb.project.services;
 
 import com.airbnb.project.Exception.ResourceNotFoundException;
 import com.airbnb.project.dto.HotelDTO;
+import com.airbnb.project.dto.HotelInfoDTO;
+import com.airbnb.project.dto.RoomDTO;
 import com.airbnb.project.entities.Hotel;
 import com.airbnb.project.entities.Room;
 import com.airbnb.project.repository.HotelRepository;
@@ -14,6 +16,8 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -81,6 +85,19 @@ public class HotelServiceImpl implements HotelService {
         for(Room room : hotel.getRooms())
             inventoryService.initializeRoomForYear(room);
 
+
+
+    }
+
+    @Override
+    public HotelInfoDTO getHotelInfoById(Long id) {
+       Hotel hotel = getById(id);
+
+       List<RoomDTO> roomDTOList = hotel.getRooms()
+               .stream().map((room)->modelMapper.map(room, RoomDTO.class))
+               .collect(Collectors.toList());
+
+       return new HotelInfoDTO(modelMapper.map(hotel,HotelDTO.class),roomDTOList);
 
 
     }
