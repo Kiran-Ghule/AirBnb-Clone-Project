@@ -41,6 +41,7 @@ public class InventoryServiceImpl implements InventoryService {
                     .room(room)
                     .date(today)
                     .bookCount(0)
+                    .reservedCount(0)
                     .totalCount(room.getTotalCount())
                     .scaleFactor(BigDecimal.ONE)
                     .price(room.getBasePrice())
@@ -54,13 +55,14 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void deleteFutureInventory(Room room) {
-
+        log.info("Deleting future inventory for room Id : {}", room.getId());
         inventoryRepository.deleteByRoom(room);
 
     }
 
     @Override
     public Page<HotelDTO> searchHotels(HotelSearchRequest hotelSearchRequest) {
+        log.info("Searching hotels for {} city, from {} to {} " ,hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate());
         Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(), hotelSearchRequest.getSize());
 
         long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate())+1;
